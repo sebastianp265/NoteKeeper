@@ -1,0 +1,4 @@
+logging:
+    level:
+        com.github.sebastianp265.notekeeper: DEBUG
+
