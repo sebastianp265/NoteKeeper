@@ -16,6 +16,8 @@ java -jar target/*.jar
 
 ```
 curl -v localhost:8080/notes
+```
+```
 curl -v localhost:8080/notes/1
 ```
 
