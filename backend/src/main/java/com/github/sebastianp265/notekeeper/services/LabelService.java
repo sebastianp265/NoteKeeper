@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +34,8 @@ public class LabelService {
     }
 
     public Label update(String name, Label label) {
-        if(label.getName() != null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Label name should ONLY be provided by mapping");
+        if(!Objects.equals(label.getName(), name) ) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name from mapping doesn't match label name");
         }
 
         label.setName(name);
