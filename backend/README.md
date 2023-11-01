@@ -10,7 +10,7 @@
 java -jar target/*.jar
 ```
 
-## Swagger
+## Swagger - OpenAPI
 
 Swagger UI URL:\
 http://localhost:8080/swagger-ui/index.html
