@@ -1,11 +1,13 @@
-# NoteKeeper
+# NoteKeeper Backend
 
-## Building
+## Build and run manually
+
+### Building
 ```
 ./mvnw package
 ```
 
-## Running
+### Running
 ```
 java -jar target/*.jar
 ```
@@ -17,7 +19,7 @@ http://localhost:8080/swagger-ui/index.html
 
 ## Curl examples
 
-### Get
+### GET
 
 ```
 curl -v localhost:8080/notes
