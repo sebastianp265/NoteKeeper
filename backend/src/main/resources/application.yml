@@ -1,3 +1,6 @@
+springdoc:
+  default-produces-media-type: application/json
+
 logging:
   level:
     com.github.sebastianp265.notekeeper: DEBUG

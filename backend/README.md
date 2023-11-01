@@ -1,37 +1,46 @@
-# NoteKeeper
+# NoteKeeper Backend
 
-## Building
+## Build and run manually
+
+### Building
 ```
 ./mvnw package
 ```
 
-## Running
+### Running
 ```
 java -jar target/*.jar
 ```
 
-# Curl examples
+## Swagger - OpenAPI
 
-## Get
+Swagger UI URL:\
+http://localhost:8080/swagger-ui/index.html
+
+## Curl examples
+
+### GET
 
 ```
 curl -v localhost:8080/notes
+```
+```
 curl -v localhost:8080/notes/1
 ```
 
-## POST
+### POST
 
 ```
 curl -v -X POST localhost:8080/notes -H 'Content-type:application/json' -d '{"title":"Note 1.0","text":"text"}'
 ```
 
-## PUT
+### PUT
 
 ```
 curl -v -X PUT  localhost:8080/notes/1 -H 'Content-type:application/json' -d '{"title":"Note 1.1","text":"text"}'
 ```
 
-## DELETE
+### DELETE
 
 ```
 curl -v -X DELETE  localhost:8080/notes/1

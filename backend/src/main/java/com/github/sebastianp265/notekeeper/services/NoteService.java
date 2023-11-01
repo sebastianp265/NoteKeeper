@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collection;
+import java.util.Objects;
 
 
 @Service
@@ -34,8 +35,8 @@ public class NoteService {
     }
 
     public Note update(Long id, Note note) {
-        if(note.getId() != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Note id should ONLY be provided by mapping");
+        if(!Objects.equals(note.getId(), id)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provided id from mapping doesn't match note id");
         }
 
         note.setId(id);
