@@ -18,7 +18,7 @@ public class OpenAPIConfiguration {
                         .contact(new Contact()
                                 .name("Sebastian Pawliński")
                                 .email("pawlinskisebastian@gmail.com")
-                                .url("github.com/sebastianp265"))
+                                .url("https://github.com/sebastianp265"))
                 );
     }
 }
