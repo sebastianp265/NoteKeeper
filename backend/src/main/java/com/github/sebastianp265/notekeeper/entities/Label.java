@@ -23,6 +23,6 @@ public class Label extends Auditable {
     private String name;
 
     @OneToMany
-    private Collection<Note> noteSet;
+    private Collection<Note> labels;
 
 }

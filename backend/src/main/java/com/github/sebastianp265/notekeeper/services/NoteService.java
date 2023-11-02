@@ -1,6 +1,8 @@
 package com.github.sebastianp265.notekeeper.services;
 
+import com.github.sebastianp265.notekeeper.dto.NoteDto;
 import com.github.sebastianp265.notekeeper.entities.Note;
+import com.github.sebastianp265.notekeeper.mappings.NoteMapper;
 import com.github.sebastianp265.notekeeper.repositories.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,32 +17,41 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class NoteService {
 
+    private final NoteMapper noteMapper;
     private final NoteRepository noteRepository;
 
-    public Collection<Note> findAll() {
-        return noteRepository.findAll();
+    public Collection<NoteDto> findAll() {
+        return noteRepository.findAll()
+                .stream()
+                .map(noteMapper::toDto)
+                .toList();
     }
 
-    public Note findById(Long id) {
+    public NoteDto findById(Long id) {
         return noteRepository.findById(id)
+                .map(noteMapper::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
     }
 
-    public Note create(Note note) {
-        if (note.getId() != null) {
+    public NoteDto create(NoteDto noteDto) {
+        if (noteDto.getId() != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide note without id");
         }
 
-        return noteRepository.save(note);
+        return save(noteDto);
     }
 
-    public Note update(Long id, Note note) {
-        if(!Objects.equals(note.getId(), id)) {
+    public NoteDto update(Long id, NoteDto noteDto) {
+        if(!Objects.equals(noteDto.getId(), id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provided id from mapping doesn't match note id");
         }
 
-        note.setId(id);
-        return noteRepository.save(note);
+        return save(noteDto);
+    }
+
+    private NoteDto save(NoteDto noteDto) {
+        Note note = noteMapper.toEntity(noteDto);
+        return noteMapper.toDto(noteRepository.save(note));
     }
 
     public void deleteById(Long id) {

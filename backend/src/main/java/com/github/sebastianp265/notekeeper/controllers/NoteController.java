@@ -1,6 +1,8 @@
 package com.github.sebastianp265.notekeeper.controllers;
 
-import com.github.sebastianp265.notekeeper.entities.Note;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.github.sebastianp265.notekeeper.dto.NoteDto;
+import com.github.sebastianp265.notekeeper.dto.Views;
 import com.github.sebastianp265.notekeeper.services.NoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,11 +23,12 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class NoteController {
 
-    public final NoteService noteService;
+    private final NoteService noteService;
 
     @Operation(summary = "Find all Notes", description = "Get all Note objects.", tags = {"GET"})
     @GetMapping
-    public Collection<Note> findAll() {
+    @JsonView(Views.Get.class)
+    public Collection<NoteDto> findAll() {
         log.debug("Finding all notes");
         return noteService.findAll();
     }
@@ -35,7 +38,8 @@ public class NoteController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Given id doesn't match any existing Note id", content = {@Content(schema = @Schema())})
     @GetMapping("/{id}")
-    public Note findById(@PathVariable Long id) {
+    @JsonView(Views.Get.class)
+    public NoteDto findById(@PathVariable Long id) {
         log.debug("Finding note by id = {}", id);
         return noteService.findById(id);
     }
@@ -46,9 +50,10 @@ public class NoteController {
     @ApiResponse(responseCode = "201")
     @ApiResponse(responseCode = "400", description = "Given note body has provided id", content = {@Content(schema = @Schema())})
     @ResponseStatus(HttpStatus.CREATED)
-    public Note create(@RequestBody Note note) {
-        log.debug("Creating note with body = {}", note);
-        return noteService.create(note);
+    @JsonView(Views.Get.class)
+    public NoteDto create(@RequestBody @JsonView(Views.Post.class) NoteDto noteDto) {
+        log.debug("Creating note with body = {}", noteDto);
+        return noteService.create(noteDto);
     }
 
 
@@ -56,9 +61,10 @@ public class NoteController {
     @Operation(summary = "Update Note", description = "Update note object by providing it's id and Note body", tags = {"PUT"})
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Provided id from mapping doesn't match note id", content = {@Content(schema = @Schema())})
-    public Note update(@PathVariable Long id, @RequestBody Note note) {
-        log.debug("Updating note with id = {}\nand body = {}", id, note);
-        return noteService.update(id, note);
+    @JsonView(Views.Get.class)
+    public NoteDto update(@PathVariable Long id, @RequestBody @JsonView(Views.Put.class) NoteDto noteDto) {
+        log.debug("Updating note with id = {}\nand body = {}", id, noteDto);
+        return noteService.update(id, noteDto);
     }
 
 

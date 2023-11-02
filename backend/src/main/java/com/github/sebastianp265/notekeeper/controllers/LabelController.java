@@ -1,6 +1,8 @@
 package com.github.sebastianp265.notekeeper.controllers;
 
-import com.github.sebastianp265.notekeeper.entities.Label;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.github.sebastianp265.notekeeper.dto.LabelDto;
+import com.github.sebastianp265.notekeeper.dto.Views;
 import com.github.sebastianp265.notekeeper.services.LabelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,7 +27,8 @@ public class LabelController {
 
     @Operation(summary = "Find all Label", description = "Get all Label objects.", tags = {"GET"})
     @GetMapping
-    public Collection<Label> findAll() {
+    @JsonView({Views.Get.class})
+    public Collection<LabelDto> findAll() {
         log.debug("Finding all labels");
         return labelService.findAll();
     }
@@ -35,7 +38,8 @@ public class LabelController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Given name doesn't match any existing label name", content = {@Content(schema = @Schema())})
     @GetMapping("/{name}")
-    public Label findById(@PathVariable String name) {
+    @JsonView({Views.Get.class})
+    public LabelDto findById(@PathVariable String name) {
         log.debug("Finding label by name = " + name);
         return labelService.findById(name);
     }
@@ -46,9 +50,10 @@ public class LabelController {
     @ApiResponse(responseCode = "201")
     @ApiResponse(responseCode = "400", description = "Given label body didn't provide label name", content = {@Content(schema = @Schema())})
     @ResponseStatus(HttpStatus.CREATED)
-    public Label create(@RequestBody Label label) {
-        log.debug("Creating label with body = " + label);
-        return labelService.create(label);
+    @JsonView({Views.Get.class})
+    public LabelDto create(@RequestBody @JsonView({Views.Post.class}) LabelDto labelDto) {
+        log.debug("Creating label with body = " + labelDto);
+        return labelService.create(labelDto);
     }
 
 
@@ -56,9 +61,10 @@ public class LabelController {
     @PutMapping("/{name}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Provided name from mapping doesn't match label name", content = {@Content(schema = @Schema())})
-    public Label update(@PathVariable String name, @RequestBody Label label) {
-        log.debug("Updating label with id = {}\nand body = {}", name, label);
-        return labelService.update(name, label);
+    @JsonView({Views.Get.class})
+    public LabelDto update(@PathVariable String name, @RequestBody @JsonView({Views.Put.class}) LabelDto labelDto) {
+        log.debug("Updating label with id = {}\nand body = {}", name, labelDto);
+        return labelService.update(name, labelDto);
     }
 
     @Operation(summary = "Delete Label", description = "Delete label by providing it's name", tags = {"DELETE"})
