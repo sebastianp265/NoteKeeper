@@ -24,7 +24,7 @@ public class NoteDto {
     String text;
 
     @Schema(description = "Label foreign key")
-    @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
+    @JsonView({Views.Get.class})
     LabelDto label;
 
 }

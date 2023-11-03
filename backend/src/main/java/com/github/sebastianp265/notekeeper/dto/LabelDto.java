@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.Collection;
+import java.util.Set;
 
 @Value
 @Builder
@@ -17,8 +17,12 @@ public class LabelDto {
     @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
     String name;
 
+    @Schema(description = "Label description")
+    @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
+    String description;
+
     @Schema(description = "Notes attached to the Label")
     @JsonView({Views.Get.class})
-    Collection<NoteDto> notes;
+    Set<NoteDto> notes;
 
 }

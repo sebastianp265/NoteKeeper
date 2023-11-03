@@ -20,6 +20,7 @@ public class Note extends Auditable {
     private String title;
     private String text;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "note_id")
     private Label label;
 }

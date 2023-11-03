@@ -2,7 +2,9 @@ package com.github.sebastianp265.notekeeper.services;
 
 import com.github.sebastianp265.notekeeper.dto.NoteDto;
 import com.github.sebastianp265.notekeeper.entities.Note;
+import com.github.sebastianp265.notekeeper.mappings.LabelMapper;
 import com.github.sebastianp265.notekeeper.mappings.NoteMapper;
+import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
 import com.github.sebastianp265.notekeeper.repositories.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,7 +20,10 @@ import java.util.Objects;
 public class NoteService {
 
     private final NoteMapper noteMapper;
+    private final LabelMapper labelMapper;
+
     private final NoteRepository noteRepository;
+    private final LabelRepository labelRepository;
 
     public Collection<NoteDto> findAll() {
         return noteRepository.findAll()
