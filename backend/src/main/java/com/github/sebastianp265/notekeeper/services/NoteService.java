@@ -1,6 +1,7 @@
 package com.github.sebastianp265.notekeeper.services;
 
 import com.github.sebastianp265.notekeeper.dto.NoteDto;
+import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
 import com.github.sebastianp265.notekeeper.mappings.LabelMapper;
 import com.github.sebastianp265.notekeeper.mappings.NoteMapper;
@@ -61,5 +62,15 @@ public class NoteService {
 
     public void deleteById(Long id) {
         noteRepository.deleteById(id);
+    }
+
+    public NoteDto attachLabel(Long id, String labelName) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
+        Label label = labelRepository.findById(labelName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
+        note.setLabel(label);
+
+        return noteMapper.toDto(noteRepository.save(note));
     }
 }

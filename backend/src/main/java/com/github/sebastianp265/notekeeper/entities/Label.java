@@ -22,7 +22,7 @@ public class Label extends Auditable {
 
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "label", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "label", cascade = CascadeType.ALL)
     private Set<Note> notes;
 
 }

@@ -21,6 +21,6 @@ public class Note extends Auditable {
     private String text;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "note_id")
+    @JoinColumn(name = "label_name")
     private Label label;
 }

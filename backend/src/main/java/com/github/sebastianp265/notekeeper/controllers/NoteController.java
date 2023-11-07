@@ -69,9 +69,20 @@ public class NoteController {
 
 
     @DeleteMapping("/{id}")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "404", description = "Note with provided id doesn't exist")
     @Operation(summary = "Delete Note", description = "Delete Note object by providing it's id", tags = {"DELETE"})
     public void delete(@PathVariable Long id) {
         log.debug("Updating note with id = {}", id);
         noteService.deleteById(id);
+    }
+
+    @PutMapping("/{id}/label/{labelName}")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
+    @Operation(summary = "Attach Label to Note", description = "Attach Label to Note by providing Note id and Label name")
+    public NoteDto attachLabel(@PathVariable Long id, @PathVariable String labelName) {
+        log.debug("Attaching label to note");
+        return noteService.attachLabel(id, labelName);
     }
 }
