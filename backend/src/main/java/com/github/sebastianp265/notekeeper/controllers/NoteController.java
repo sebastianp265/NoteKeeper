@@ -63,7 +63,7 @@ public class NoteController {
     @ApiResponse(responseCode = "400", description = "Provided id from mapping doesn't match note id", content = {@Content(schema = @Schema())})
     @JsonView(Views.Get.class)
     public NoteDto update(@PathVariable Long id, @RequestBody @JsonView(Views.Put.class) NoteDto noteDto) {
-        log.debug("Updating note with id = {}\nand body = {}", id, noteDto);
+        log.debug("Updating note with id = {} and body = {}", id, noteDto);
         return noteService.update(id, noteDto);
     }
 
@@ -81,6 +81,7 @@ public class NoteController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Attach Label to Note", description = "Attach Label to Note by providing Note id and Label name")
+    @JsonView(Views.Get.class)
     public NoteDto attachLabel(@PathVariable Long id, @PathVariable String labelName) {
         log.debug("Attaching label to note");
         return noteService.attachLabel(id, labelName);

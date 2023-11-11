@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Set;
+
 @Entity
 @Table
 @SuperBuilder
@@ -16,11 +18,18 @@ public class Note extends Auditable {
 
     @Id
     @GeneratedValue
+    @Column(name = "note_id")
     private Long id;
-    private String title;
-    private String text;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "label_name")
-    private Label label;
+    private String title;
+
+    private String content;
+
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "note_label",
+            joinColumns = @JoinColumn(name = "note_id"),
+            inverseJoinColumns = @JoinColumn(name = "label_name_id")
+    )
+    private Set<Label> labels;
 }

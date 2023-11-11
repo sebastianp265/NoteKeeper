@@ -3,7 +3,6 @@ package com.github.sebastianp265.notekeeper.services;
 import com.github.sebastianp265.notekeeper.dto.NoteDto;
 import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
-import com.github.sebastianp265.notekeeper.mappings.LabelMapper;
 import com.github.sebastianp265.notekeeper.mappings.NoteMapper;
 import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
 import com.github.sebastianp265.notekeeper.repositories.NoteRepository;
@@ -21,7 +20,6 @@ import java.util.Objects;
 public class NoteService {
 
     private final NoteMapper noteMapper;
-    private final LabelMapper labelMapper;
 
     private final NoteRepository noteRepository;
     private final LabelRepository labelRepository;
@@ -67,9 +65,13 @@ public class NoteService {
     public NoteDto attachLabel(Long id, String labelName) {
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
+
+        if(note.getLabels().stream().anyMatch(label -> label.getName().equals(labelName))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Note already has label with given name");
+        }
         Label label = labelRepository.findById(labelName)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
-        note.setLabel(label);
+        note.getLabels().add(label);
 
         return noteMapper.toDto(noteRepository.save(note));
     }

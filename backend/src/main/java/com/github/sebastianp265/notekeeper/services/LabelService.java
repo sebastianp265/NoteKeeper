@@ -27,9 +27,9 @@ public class LabelService {
                 .toList();
     }
 
-    public LabelDto findById(String name) {
+    public LabelDto findByLabelName(String labelName) {
         return labelRepository
-                .findById(name)
+                .findById(labelName)
                 .map(labelMapper::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label not found"));
     }
@@ -55,7 +55,7 @@ public class LabelService {
         return labelMapper.toDto(labelRepository.save(label));
     }
 
-    public void deleteById(String name) {
-        labelRepository.deleteById(name);
+    public void delete(String labelName) {
+        labelRepository.deleteById(labelName);
     }
 }

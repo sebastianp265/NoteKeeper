@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.Set;
+
 @Value
 @Builder
 @Jacksonized
@@ -19,12 +21,12 @@ public class NoteDto {
     @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
     String title;
 
-    @Schema(description = "Note text", example = "Note text example")
+    @Schema(description = "Note content", example = "Note content example")
     @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
-    String text;
+    String content;
 
-    @Schema(description = "Label foreign key")
+    @Schema(description = "Note labels name", example = "[\"Label 1 name\", \"Label 2 name\"]")
     @JsonView({Views.Get.class})
-    LabelDto label;
+    Set<String> labelNames;
 
 }

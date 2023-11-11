@@ -37,11 +37,11 @@ public class LabelController {
     @Operation(summary = "Find Label", description = "Get Label object by providing it's id.", tags = {"GET"})
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Given name doesn't match any existing label name", content = {@Content(schema = @Schema())})
-    @GetMapping("/{name}")
+    @GetMapping("/{labelName}")
     @JsonView({Views.Get.class})
-    public LabelDto findById(@PathVariable String name) {
-        log.debug("Finding label by name = " + name);
-        return labelService.findById(name);
+    public LabelDto findByLabelName(@PathVariable String labelName) {
+        log.debug("Finding label by name = " + labelName);
+        return labelService.findByLabelName(labelName);
     }
 
 
@@ -68,9 +68,9 @@ public class LabelController {
     }
 
     @Operation(summary = "Delete Label", description = "Delete label by providing it's name", tags = {"DELETE"})
-    @DeleteMapping("/{name}")
-    public void delete(@PathVariable String name) {
-        log.debug("Updating label with name = {}", name);
-        labelService.deleteById(name);
+    @DeleteMapping("/{labelName}")
+    public void delete(@PathVariable String labelName) {
+        log.debug("Updating label with name = {}", labelName);
+        labelService.delete(labelName);
     }
 }

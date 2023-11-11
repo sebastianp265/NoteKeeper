@@ -1,10 +1,11 @@
 package com.github.sebastianp265.notekeeper.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.util.Set;
 
 
 @Entity
@@ -18,11 +19,9 @@ import java.util.Set;
 public class Label extends Auditable {
 
     @Id
+    @Column(name = "label_name_id")
     private String name;
 
     private String description;
-
-    @OneToMany(mappedBy = "label", cascade = CascadeType.ALL)
-    private Set<Note> notes;
 
 }
