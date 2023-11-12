@@ -1,19 +1,21 @@
 package com.github.sebastianp265.notekeeper.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 
 @Entity
 @Table
+@Data
 @SuperBuilder
-@Setter
-@Getter
-@ToString(callSuper = true)
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class Note extends Auditable {
 
     @Id
