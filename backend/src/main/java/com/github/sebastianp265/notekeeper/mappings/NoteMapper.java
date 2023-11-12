@@ -18,6 +18,8 @@ public interface NoteMapper {
     NoteDto toDto(Note note);
 
     @Mapping(source = "labelNames", target = "labels", qualifiedByName = "labelNamesToLabels")
+    @Mapping(target = "createdDate", ignore = true)
+    @Mapping(target = "lastModifiedDate", ignore = true)
     Note toEntity(NoteDto noteDto);
 
     @Named("labelsToLabelNames")
