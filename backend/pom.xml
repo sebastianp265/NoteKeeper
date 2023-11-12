@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.github.sebastianp265</groupId>
 	<artifactId>notekeeper</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>latest</version>
 	<name>notekeeper</name>
 	<description>Fullstack app for keeping notes, project is an assignment for &quot;Mobile and web applications programming&quot; course.</description>
 	<properties>
