@@ -5,6 +5,10 @@ logging:
   level:
     com.github.sebastianp265.notekeeper: DEBUG
 
+server:
+  error:
+    include-message: always # Unsafe - only for development
+
 ---
 
 spring:
