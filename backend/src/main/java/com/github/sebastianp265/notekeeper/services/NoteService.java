@@ -56,11 +56,6 @@ public class NoteService {
         return noteMapper.toDto(noteRepository.save(noteMapper.toEntity(noteDto)));
     }
 
-    private NoteDto save(NoteDto noteDto) {
-        Note note = noteMapper.toEntity(noteDto);
-        return noteMapper.toDto(noteRepository.save(note));
-    }
-
     public void deleteById(Long id) {
         noteRepository.deleteById(id);
     }
