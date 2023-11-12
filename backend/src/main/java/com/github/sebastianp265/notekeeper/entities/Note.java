@@ -17,7 +17,7 @@ import java.util.Set;
 public class Note extends Auditable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "note_id")
     private Long id;
 

@@ -18,6 +18,7 @@ import java.util.Collection;
 
 @Slf4j
 @RestController
+@ControllerAdvice
 @Tag(name = "Notes", description = "Notes management APIs")
 @RequestMapping(value = "notes")
 @RequiredArgsConstructor
@@ -61,6 +62,7 @@ public class NoteController {
     @Operation(summary = "Update Note", description = "Update note object by providing it's id and Note body", tags = {"PUT"})
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Provided id from mapping doesn't match note id", content = {@Content(schema = @Schema())})
+    @ApiResponse(responseCode = "404", description = "Note with given id not found", content = {@Content(schema = @Schema())})
     @JsonView(Views.Get.class)
     public NoteDto update(@PathVariable Long id, @RequestBody @JsonView(Views.Put.class) NoteDto noteDto) {
         log.debug("Updating note with id = {} and body = {}", id, noteDto);
@@ -77,7 +79,7 @@ public class NoteController {
         noteService.deleteById(id);
     }
 
-    @PutMapping("/{id}/label/{labelName}")
+    @PutMapping("/{id}/attach-label/{labelName}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Attach Label to Note", description = "Attach Label to Note by providing Note id and Label name")
@@ -85,5 +87,15 @@ public class NoteController {
     public NoteDto attachLabel(@PathVariable Long id, @PathVariable String labelName) {
         log.debug("Attaching label to note");
         return noteService.attachLabel(id, labelName);
+    }
+
+    @DeleteMapping("/{id}/detach-label/{labelName}")
+    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
+    @Operation(summary = "Detach Label from Note", description = "Detach Label from Note by providing Note id and Label name")
+    @JsonView(Views.Get.class)
+    public NoteDto detachLabel(@PathVariable Long id, @PathVariable String labelName) {
+        log.debug("Detaching label from note");
+        return noteService.detachLabel(id, labelName);
     }
 }

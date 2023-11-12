@@ -42,15 +42,18 @@ public class NoteService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide note without id");
         }
 
-        return save(noteDto);
+        return noteMapper.toDto(noteRepository.save(noteMapper.toEntity(noteDto)));
     }
 
     public NoteDto update(Long id, NoteDto noteDto) {
         if(!Objects.equals(noteDto.getId(), id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provided id from mapping doesn't match note id");
         }
+        if(noteRepository.findById(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found");
+        }
 
-        return save(noteDto);
+        return noteMapper.toDto(noteRepository.save(noteMapper.toEntity(noteDto)));
     }
 
     private NoteDto save(NoteDto noteDto) {
@@ -66,12 +69,20 @@ public class NoteService {
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
 
-        if(note.getLabels().stream().anyMatch(label -> label.getName().equals(labelName))) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Note already has label with given name");
-        }
         Label label = labelRepository.findById(labelName)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
         note.getLabels().add(label);
+
+        return noteMapper.toDto(noteRepository.save(note));
+    }
+
+    public NoteDto detachLabel(Long id, String labelName) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
+
+        Label label = labelRepository.findById(labelName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
+        note.getLabels().remove(label);
 
         return noteMapper.toDto(noteRepository.save(note));
     }

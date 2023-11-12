@@ -12,12 +12,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
 @Slf4j
 @RestController
+@ControllerAdvice
 @Tag(name = "Labels", description = "Labels management APIs")
 @RequestMapping("labels")
 @RequiredArgsConstructor
@@ -37,11 +39,11 @@ public class LabelController {
     @Operation(summary = "Find Label", description = "Get Label object by providing it's id.", tags = {"GET"})
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Given name doesn't match any existing label name", content = {@Content(schema = @Schema())})
-    @GetMapping("/{labelName}")
+    @GetMapping("/{id}")
     @JsonView({Views.Get.class})
-    public LabelDto findByLabelName(@PathVariable String labelName) {
-        log.debug("Finding label by name = " + labelName);
-        return labelService.findByLabelName(labelName);
+    public LabelDto findById(@PathVariable String id) {
+        log.debug("Finding label by name = " + id);
+        return labelService.findById(id);
     }
 
 
@@ -62,7 +64,7 @@ public class LabelController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Provided name from mapping doesn't match label name", content = {@Content(schema = @Schema())})
     @JsonView({Views.Get.class})
-    public LabelDto update(@PathVariable String name, @RequestBody @JsonView({Views.Put.class}) LabelDto labelDto) {
+    public ResponseEntity<LabelDto> update(@PathVariable String name, @RequestBody @JsonView({Views.Put.class}) LabelDto labelDto) {
         log.debug("Updating label with id = {}\nand body = {}", name, labelDto);
         return labelService.update(name, labelDto);
     }

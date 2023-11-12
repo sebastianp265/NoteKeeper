@@ -6,6 +6,7 @@ import com.github.sebastianp265.notekeeper.mappings.LabelMapper;
 import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,7 +28,7 @@ public class LabelService {
                 .toList();
     }
 
-    public LabelDto findByLabelName(String labelName) {
+    public LabelDto findById(String labelName) {
         return labelRepository
                 .findById(labelName)
                 .map(labelMapper::toDto)
@@ -38,16 +39,23 @@ public class LabelService {
         if(labelDto.getName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Label name has to be provided");
         }
+        if(labelRepository.findById(labelDto.getName()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Label with this name already exists");
+        }
 
         return save(labelDto);
     }
 
-    public LabelDto update(String name, LabelDto labelDto) {
-        if(!Objects.equals(labelDto.getName(), name) ) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Name from mapping doesn't match label name");
+    public ResponseEntity<LabelDto> update(String name, LabelDto labelDto) {
+        if(!Objects.equals(name, labelDto.getName()) ) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name from mapping doesn't match label name");
+        }
+        HttpStatus status = HttpStatus.OK;
+        if(labelRepository.findById(name).isEmpty()) {
+            status = HttpStatus.CREATED;
         }
 
-        return save(labelDto);
+        return new ResponseEntity<>(save(labelDto), status);
     }
 
     private LabelDto save(LabelDto labelDto) {
