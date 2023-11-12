@@ -1,16 +1,18 @@
 package com.github.sebastianp265.notekeeper.endtoend;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.sebastianp265.notekeeper.dto.LabelDto;
+import com.github.sebastianp265.notekeeper.dto.NoteDto;
 import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
 import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
 import com.github.sebastianp265.notekeeper.repositories.NoteRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,6 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 class PostTest {
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,23 +33,28 @@ class PostTest {
     @Autowired
     private LabelRepository labelRepository;
 
+    @AfterEach
+    void tearDown() {
+        noteRepository.deleteAll();
+        labelRepository.deleteAll();
+    }
+
     @Test
-    void whenNoteIsPosted_thenNoteIsInDB() throws Exception {
+    void createNote_whenNoteIsPosted_thenNoteIsInDB() throws Exception {
         // given
         String note = "{\"title\": \"title\", \"content\": \"content\"}";
 
         // when
-        mockMvc.perform(post("/notes")
-                .contentType("application/json")
-                .content(note))
-                .andExpect(status().isCreated());
+        String response = mockMvc.perform(post("/notes")
+                        .contentType("application/json")
+                        .content(note))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         // then
-        List<Note> notes = noteRepository.findAll();
+        NoteDto responseNote = objectMapper.readValue(response, NoteDto.class);
 
-        assertThat(notes).hasSize(1);
-
-        Note noteInDB = notes.get(0);
+        Note noteInDB = noteRepository.findById(responseNote.getId()).orElseThrow();
 
         assertThat(noteInDB.getId()).isNotNull();
         assertThat(noteInDB.getTitle()).isEqualTo("title");
@@ -56,48 +65,45 @@ class PostTest {
     }
 
     @Test
-    void whenLabelIsPosted_thenLabelIsInDB() throws Exception {
+    void createLabel_whenLabelIsPosted_thenLabelIsInDB() throws Exception {
         // given
         String label = "{\"name\": \"label\", \"description\": \"description\"}";
 
         // when
-        mockMvc.perform(post("/labels")
-                .contentType("application/json")
-                .content(label))
-                .andExpect(status().isCreated());
+        String response = mockMvc.perform(post("/labels")
+                        .contentType("application/json")
+                        .content(label))
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
 
         // then
-        List<Label> labels = labelRepository.findAll();
+        LabelDto labelDto = objectMapper.readValue(response, LabelDto.class);
 
-        assertThat(labels).hasSize(1);
-
-        Label labelInDB = labels.get(0);
+        Label labelInDB = labelRepository.findById(labelDto.getName()).orElseThrow();
 
         assertThat(labelInDB.getName()).isEqualTo("label");
     }
 
     @Test
-    void whenTwoLabelsWithTheSameNameArePosted_thenExpectBadRequest() throws Exception {
+    void createLabel_whenTwoLabelsWithTheSameNameArePosted_thenExpectBadRequest() throws Exception {
         // given
         String label = "{\"name\": \"label\", \"description\": \"description\"}";
         mockMvc.perform(post("/labels")
-                .contentType("application/json")
-                .content(label))
+                        .contentType("application/json")
+                        .content(label))
                 .andExpect(status().isCreated());
 
         // when
         String labelWithTheSameName = "{\"name\": \"label\", \"description\": \"Description of the second label\"}";
         mockMvc.perform(post("/labels")
-                .contentType("application/json")
-                .content(labelWithTheSameName))
-                .andExpect(status().isBadRequest());
+                        .contentType("application/json")
+                        .content(labelWithTheSameName))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getContentAsString();
 
         // then
-        List<Label> labels = labelRepository.findAll();
 
-        assertThat(labels).hasSize(1);
-
-        Label labelInDB = labels.get(0);
+        Label labelInDB = labelRepository.findById("label").orElseThrow();
 
         assertThat(labelInDB.getName()).isEqualTo("label");
         assertThat(labelInDB.getDescription()).isEqualTo("description");
