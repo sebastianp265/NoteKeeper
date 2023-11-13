@@ -1,5 +1,10 @@
 springdoc:
   default-produces-media-type: application/json
+  swagger-ui:
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    filter: true
 
 logging:
   level:
@@ -8,6 +13,22 @@ logging:
 server:
   error:
     include-message: always # Unsafe - only for development
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://db:5432/notekeeper
+    username: postgres
+    password: postgres
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update # (create, create-drop, validate, update)
 
 ---
 
