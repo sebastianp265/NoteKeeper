@@ -46,10 +46,10 @@ public class NoteService {
     }
 
     public NoteDto update(Long id, NoteDto noteDto) {
-        if(!Objects.equals(noteDto.getId(), id)) {
+        if (!Objects.equals(noteDto.getId(), id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provided id from mapping doesn't match note id");
         }
-        if(noteRepository.findById(id).isEmpty()) {
+        if (noteRepository.findById(id).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found");
         }
 

@@ -36,10 +36,10 @@ public class LabelService {
     }
 
     public LabelDto create(LabelDto labelDto) {
-        if(labelDto.getName() == null) {
+        if (labelDto.getName() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Label name has to be provided");
         }
-        if(labelRepository.findById(labelDto.getName()).isPresent()) {
+        if (labelRepository.findById(labelDto.getName()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Label with this name already exists");
         }
 
@@ -47,11 +47,11 @@ public class LabelService {
     }
 
     public ResponseEntity<LabelDto> update(String name, LabelDto labelDto) {
-        if(!Objects.equals(name, labelDto.getName()) ) {
+        if (!Objects.equals(name, labelDto.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name from mapping doesn't match label name");
         }
         HttpStatus status = HttpStatus.OK;
-        if(labelRepository.findById(name).isEmpty()) {
+        if (labelRepository.findById(name).isEmpty()) {
             status = HttpStatus.CREATED;
         }
 
