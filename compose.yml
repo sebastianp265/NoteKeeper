@@ -26,7 +26,7 @@ services:
       - network
     healthcheck:
       test: pg_isready -U postgres
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
 

@@ -14,6 +14,10 @@ server:
   error:
     include-message: always # Unsafe - only for development
 
+spring:
+  jpa:
+    open-in-view: false
+
 ---
 
 spring:
@@ -22,11 +26,10 @@ spring:
       on-profile: dev
 
   datasource:
-    url: jdbc:postgresql://db:5432/notekeeper
+    url: jdbc:postgresql://db:5432/backend
     username: postgres
     password: postgres
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update # (create, create-drop, validate, update)
 
@@ -48,6 +51,3 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
-
-  jpa:
-    open-in-view: false
