@@ -89,7 +89,7 @@ public class NoteController {
         return noteService.attachLabel(id, labelName);
     }
 
-    @DeleteMapping("/{id}/detach-label/{labelName}")
+    @PutMapping("/{id}/detach-label/{labelName}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Detach Label from Note", description = "Detach Label from Note by providing Note id and Label name")

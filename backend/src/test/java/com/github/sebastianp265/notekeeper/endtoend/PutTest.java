@@ -270,7 +270,7 @@ class PutTest {
         noteRepository.save(note);
 
         // when
-        mockMvc.perform(delete("/notes/" + note.getId() + "/detach-label/" + label.getName()))
+        mockMvc.perform(put("/notes/" + note.getId() + "/detach-label/" + label.getName()))
                 .andExpect(status().isOk());
 
         // then
