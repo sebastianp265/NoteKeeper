@@ -19,6 +19,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@EqualsAndHashCode
 public abstract class Auditable {
 
     @CreatedDate
