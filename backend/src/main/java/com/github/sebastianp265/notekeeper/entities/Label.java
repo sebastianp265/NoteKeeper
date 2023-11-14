@@ -1,28 +1,29 @@
 package com.github.sebastianp265.notekeeper.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Collection;
 
 @Entity
 @Table
+@Data
 @SuperBuilder
-@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class Label extends Auditable {
 
     @Id
+    @Column(name = "label_name_id")
     private String name;
 
-    @OneToMany
-    private Collection<Note> noteSet;
+    private String description;
 
 }

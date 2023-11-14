@@ -1,9 +1,41 @@
 springdoc:
   default-produces-media-type: application/json
+  swagger-ui:
+    try-it-out-enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    filter: true
 
 logging:
   level:
     com.github.sebastianp265.notekeeper: DEBUG
+
+server:
+  error:
+    include-message: always # Unsafe - only for development
+
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://db:5432/backend
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update # (create, create-drop, validate, update)
 
 ---
 
@@ -21,6 +53,5 @@ spring:
   h2:
     console:
       enabled: true
-
-  jpa:
-    open-in-view: false
+      settings:
+        web-allow-others: true

@@ -1,6 +1,10 @@
 package com.github.sebastianp265.notekeeper.services;
 
+import com.github.sebastianp265.notekeeper.dto.NoteDto;
+import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
+import com.github.sebastianp265.notekeeper.mappings.NoteMapper;
+import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
 import com.github.sebastianp265.notekeeper.repositories.NoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,35 +19,66 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class NoteService {
 
-    private final NoteRepository noteRepository;
+    private final NoteMapper noteMapper;
 
-    public Collection<Note> findAll() {
-        return noteRepository.findAll();
+    private final NoteRepository noteRepository;
+    private final LabelRepository labelRepository;
+
+    public Collection<NoteDto> findAll() {
+        return noteRepository.findAll()
+                .stream()
+                .map(noteMapper::toDto)
+                .toList();
     }
 
-    public Note findById(Long id) {
+    public NoteDto findById(Long id) {
         return noteRepository.findById(id)
+                .map(noteMapper::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note not found"));
     }
 
-    public Note create(Note note) {
-        if (note.getId() != null) {
+    public NoteDto create(NoteDto noteDto) {
+        if (noteDto.getId() != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide note without id");
         }
 
-        return noteRepository.save(note);
+        return noteMapper.toDto(noteRepository.save(noteMapper.toEntity(noteDto)));
     }
 
-    public Note update(Long id, Note note) {
-        if(!Objects.equals(note.getId(), id)) {
+    public NoteDto update(Long id, NoteDto noteDto) {
+        if (!Objects.equals(noteDto.getId(), id)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provided id from mapping doesn't match note id");
         }
+        if (noteRepository.findById(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found");
+        }
 
-        note.setId(id);
-        return noteRepository.save(note);
+        return noteMapper.toDto(noteRepository.save(noteMapper.toEntity(noteDto)));
     }
 
     public void deleteById(Long id) {
         noteRepository.deleteById(id);
+    }
+
+    public NoteDto attachLabel(Long id, String labelName) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
+
+        Label label = labelRepository.findById(labelName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
+        note.getLabels().add(label);
+
+        return noteMapper.toDto(noteRepository.save(note));
+    }
+
+    public NoteDto detachLabel(Long id, String labelName) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
+
+        Label label = labelRepository.findById(labelName)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
+        note.getLabels().remove(label);
+
+        return noteMapper.toDto(noteRepository.save(note));
     }
 }

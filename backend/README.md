@@ -9,7 +9,7 @@
 
 ### Running
 ```
-java -jar target/*.jar
+java -Dspring.profiles.active=local -jar target/*.jar  
 ```
 
 ## Swagger - OpenAPI
@@ -17,34 +17,22 @@ java -jar target/*.jar
 Swagger UI URL:\
 http://localhost:8080/swagger-ui/index.html
 
-## Curl examples
+# Docker
 
-### GET
-
-```
-curl -v localhost:8080/notes
-```
-```
-curl -v localhost:8080/notes/1
-```
-
-### POST
+## Build by maven plugin
 
 ```
-curl -v -X POST localhost:8080/notes -H 'Content-type:application/json' -d '{"title":"Note 1.0","text":"text"}'
+./mvnw spring-boot:build-image
 ```
 
-### PUT
+## Build by dockerfile
 
 ```
-curl -v -X PUT  localhost:8080/notes/1 -H 'Content-type:application/json' -d '{"title":"Note 1.1","text":"text"}'
+docker build -t notekeeper .
 ```
 
-### DELETE
+## Running
 
 ```
-curl -v -X DELETE  localhost:8080/notes/1
+sudo docker run -p 8080:8080 -e "SPRING_PROFILES_ACTIVE=local" notekeeper:0.0.1-SNAPSHOT
 ```
-
-
-
