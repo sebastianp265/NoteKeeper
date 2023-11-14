@@ -1,12 +1,12 @@
 import {Route, Routes} from "react-router-dom";
-import Home from "./pages/home/Home";
+import LearnReact from "./pages/learn_react/LearnReact";
 
 
 export default function App() {
     return (
         <>
             <Routes>
-                <Route index={true} element={<Home/>}></Route>
+                <Route path={"/learn-react"} element={<LearnReact/>}></Route>
             </Routes>
         </>
     )
