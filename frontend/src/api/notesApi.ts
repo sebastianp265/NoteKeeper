@@ -2,19 +2,19 @@ import {backendApi} from "./backendApi.ts";
 
 const noteClient = backendApi('/notes')
 
-interface NoteGet {
+export type NoteGet = {
     id: number,
     title: string,
     content: string,
     labelNames: string[]
 }
 
-interface NotePost {
+export type NotePost = {
     title: string,
     content: string
 }
 
-interface NotePut {
+export type NotePut = {
     id: number,
     title: string,
     content: string
@@ -22,27 +22,22 @@ interface NotePut {
 
 export const notesApi = {
     getAll() {
-        console.log('Get all notes')
         return noteClient.get<NoteGet[]>('')
     },
 
     getById(id: number) {
-        console.log('Get note', id)
         return noteClient.get<NoteGet>(`/${id}`)
     },
 
     create(note: NotePost) {
-        console.log('Create note', note)
-        return noteClient.post<NotePost>('')
+        return noteClient.post<NoteGet>('', note)
     },
 
     update(id: number, note: NotePut) {
-        console.log('Update note with ' + id + ' and body ' + note)
-        return noteClient.put<NotePut>(`/${id}`)
+        return noteClient.put<NoteGet>(`/${id}`, note)
     },
 
     delete(id: number) {
-        console.log('Delete note with ' + id)
         return noteClient.delete<void>(`/${id}`)
     }
 }

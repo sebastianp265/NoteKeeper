@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 
 export const backendApi = (mapping: string) => {
     const client = axios.create({
@@ -9,13 +9,25 @@ export const backendApi = (mapping: string) => {
         }
     });
 
+    client.interceptors.request.use(request => {
+        console.log("Making request:")
+        console.log(request)
+        return request
+    })
+
     client.interceptors.response.use(
-        response => {
+        response=> {
+            console.log("Got response: ")
+            console.log(response)
             return response;
         },
-        error => {
-            console.log('An error occurred while calling backend', error)
-            return Promise.reject("error response status: " + error.response.status)
+        (error: AxiosError) => {
+            if(error.request) {
+                console.error(error.request)
+            } else {
+                console.error("Request was not made: ", error.message)
+            }
+            return Promise.reject(error)
         }
     )
 

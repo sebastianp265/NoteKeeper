@@ -2,35 +2,29 @@ import {backendApi} from "./backendApi.ts";
 
 const labelClient = backendApi('/labels')
 
-interface Label {
+export type Label = {
     name: string,
     description: string
 }
 
-
 export const labelApi = {
     getAll() {
-        console.log('Get all labels')
         return labelClient.get<Label[]>('')
     },
 
     getById(id: number) {
-        console.log('Get note', id)
         return labelClient.get<Label>(`/${id}`)
     },
 
     create(label: Label) {
-        console.log('Create label', label)
-        return labelClient.post<Label>('')
+        return labelClient.post<Label>('', label)
     },
 
     update(name: string, label: Label) {
-        console.log('Update note with name ' + name + ' and body ' + label)
-        return labelClient.put<Label>(`/${name}`)
+        return labelClient.put<Label>(`/${name}`, label)
     },
 
     delete(name: string) {
-        console.log('Delete note with name ' + name)
         return labelClient.delete<void>(`/${name}`)
     }
 }

@@ -60,7 +60,8 @@ public class LabelService {
 
     private LabelDto save(LabelDto labelDto) {
         Label label = labelMapper.toEntity(labelDto);
-        return labelMapper.toDto(labelRepository.save(label));
+        Label savedLabel = labelRepository.save(label);
+        return labelMapper.toDto(savedLabel);
     }
 
     public void delete(String labelName) {

@@ -2,4 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
+.bw {
+    word-break: break-word;
+}
