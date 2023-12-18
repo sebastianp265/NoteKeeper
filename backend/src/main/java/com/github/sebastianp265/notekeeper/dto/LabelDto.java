@@ -15,8 +15,4 @@ public class LabelDto {
     @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
     String name;
 
-    @Schema(description = "Label description")
-    @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
-    String description;
-
 }

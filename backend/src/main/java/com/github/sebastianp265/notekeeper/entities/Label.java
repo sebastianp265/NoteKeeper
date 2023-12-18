@@ -24,6 +24,4 @@ public class Label extends Auditable {
     @Column(name = "label_name_id")
     private String name;
 
-    private String description;
-
 }
