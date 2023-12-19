@@ -79,23 +79,23 @@ public class NoteController {
         noteService.deleteById(id);
     }
 
-    @PutMapping("/{id}/attach-label/{labelName}")
+    @PutMapping("/{noteId}/attach-label/{labelId}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Attach Label to Note", description = "Attach Label to Note by providing Note id and Label name")
     @JsonView(Views.Get.class)
-    public NoteDto attachLabel(@PathVariable Long id, @PathVariable String labelName) {
+    public NoteDto attachLabel(@PathVariable Long noteId, @PathVariable Long labelId) {
         log.debug("Attaching label to note");
-        return noteService.attachLabel(id, labelName);
+        return noteService.attachLabel(noteId, labelId);
     }
 
-    @PutMapping("/{id}/detach-label/{labelName}")
+    @PutMapping("/{noteId}/detach-label/{labelId}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Detach Label from Note", description = "Detach Label from Note by providing Note id and Label name")
     @JsonView(Views.Get.class)
-    public NoteDto detachLabel(@PathVariable Long id, @PathVariable String labelName) {
+    public NoteDto detachLabel(@PathVariable Long noteId, @PathVariable Long labelId) {
         log.debug("Detaching label from note");
-        return noteService.detachLabel(id, labelName);
+        return noteService.detachLabel(noteId, labelId);
     }
 }

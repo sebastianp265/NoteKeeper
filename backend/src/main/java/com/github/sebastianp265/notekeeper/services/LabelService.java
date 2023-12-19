@@ -6,7 +6,6 @@ import com.github.sebastianp265.notekeeper.mappings.LabelMapper;
 import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,34 +27,30 @@ public class LabelService {
                 .toList();
     }
 
-    public LabelDto findById(String labelName) {
+    public LabelDto findById(Long id) {
         return labelRepository
-                .findById(labelName)
+                .findById(id)
                 .map(labelMapper::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label not found"));
     }
 
     public LabelDto create(LabelDto labelDto) {
-        if (labelDto.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Label name has to be provided");
-        }
-        if (labelRepository.findById(labelDto.getName()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Label with this name already exists");
+        if (labelDto.getId() != null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Provide label without id");
         }
 
         return save(labelDto);
     }
 
-    public ResponseEntity<LabelDto> update(String name, LabelDto labelDto) {
-        if (!Objects.equals(name, labelDto.getName())) {
+    public LabelDto update(Long id, LabelDto labelDto) {
+        if (!Objects.equals(id, labelDto.getId())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name from mapping doesn't match label name");
         }
-        HttpStatus status = HttpStatus.OK;
-        if (labelRepository.findById(name).isEmpty()) {
-            status = HttpStatus.CREATED;
+        if (labelRepository.findById(id).isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given id not found");
         }
 
-        return new ResponseEntity<>(save(labelDto), status);
+        return save(labelDto);
     }
 
     private LabelDto save(LabelDto labelDto) {
@@ -64,7 +59,7 @@ public class LabelService {
         return labelMapper.toDto(savedLabel);
     }
 
-    public void delete(String labelName) {
-        labelRepository.deleteById(labelName);
+    public void delete(Long id) {
+        labelRepository.deleteById(id);
     }
 }

@@ -56,13 +56,13 @@ class DeleteTest {
     @Test
     void deleteLabel_whenLabelExists_thenLabelIsDeleted() throws Exception {
         // given
-        String labelName = labelRepository.save(Label.builder()
+        Long id = labelRepository.save(Label.builder()
                 .name("name")
                 .build()
-        ).getName();
+        ).getId();
 
         // when
-        mockMvc.perform(delete("/labels/" + labelName))
+        mockMvc.perform(delete("/labels/" + id))
                 .andExpect(status().isOk());
 
         // then
@@ -82,10 +82,10 @@ class DeleteTest {
     @Test
     void deleteLabel_whenLabelDoesNotExist_then200IsReturned() throws Exception {
         // given
-        String labelName = "name101";
+        long id = 404L;
 
         // when
-        mockMvc.perform(delete("/labels/" + labelName))
+        mockMvc.perform(delete("/labels/" + id))
                 .andExpect(status().isOk());
     }
 

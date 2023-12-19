@@ -31,7 +31,7 @@ public class Note extends Auditable {
     @JoinTable(
             name = "note_label",
             joinColumns = @JoinColumn(name = "note_id"),
-            inverseJoinColumns = @JoinColumn(name = "label_name_id")
+            inverseJoinColumns = @JoinColumn(name = "label_id")
     )
     private Set<Label> labels;
 }

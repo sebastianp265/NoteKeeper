@@ -11,6 +11,10 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 public class LabelDto {
 
+    @Schema(description = "Label id")
+    @JsonView({Views.Get.class, Views.Put.class})
+    Long id;
+
     @Schema(description = "Label name")
     @JsonView({Views.Get.class, Views.Post.class, Views.Put.class})
     String name;

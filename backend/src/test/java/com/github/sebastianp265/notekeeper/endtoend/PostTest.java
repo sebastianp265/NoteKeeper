@@ -67,7 +67,7 @@ class PostTest {
     @Test
     void createLabel_whenLabelIsPosted_thenLabelIsInDB() throws Exception {
         // given
-        String label = "{\"name\": \"label\", \"description\": \"description\"}";
+        String label = "{\"name\": \"label\"}";
 
         // when
         String response = mockMvc.perform(post("/labels")
@@ -79,34 +79,9 @@ class PostTest {
         // then
         LabelDto labelDto = objectMapper.readValue(response, LabelDto.class);
 
-        Label labelInDB = labelRepository.findById(labelDto.getName()).orElseThrow();
+        Label labelInDB = labelRepository.findById(labelDto.getId()).orElseThrow();
 
         assertThat(labelInDB.getName()).isEqualTo("label");
-    }
-
-    @Test
-    void createLabel_whenTwoLabelsWithTheSameNameArePosted_thenExpectBadRequest() throws Exception {
-        // given
-        String label = "{\"name\": \"label\", \"description\": \"description\"}";
-        mockMvc.perform(post("/labels")
-                        .contentType("application/json")
-                        .content(label))
-                .andExpect(status().isCreated());
-
-        // when
-        String labelWithTheSameName = "{\"name\": \"label\", \"description\": \"Description of the second label\"}";
-        mockMvc.perform(post("/labels")
-                        .contentType("application/json")
-                        .content(labelWithTheSameName))
-                .andExpect(status().isBadRequest())
-                .andReturn().getResponse().getContentAsString();
-
-        // then
-
-        Label labelInDB = labelRepository.findById("label").orElseThrow();
-
-        assertThat(labelInDB.getName()).isEqualTo("label");
-        assertThat(labelInDB.getDescription()).isEqualTo("description");
     }
 
 }

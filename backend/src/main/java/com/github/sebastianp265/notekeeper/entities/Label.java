@@ -1,9 +1,6 @@
 package com.github.sebastianp265.notekeeper.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,11 @@ import lombok.experimental.SuperBuilder;
 public class Label extends Auditable {
 
     @Id
-    @Column(name = "label_name_id")
+    @GeneratedValue
+    @Column(name = "label_id")
+    private Long id;
+
+    @Column(unique = true)
     private String name;
 
 }

@@ -38,10 +38,10 @@ public class LabelController {
 
     @Operation(summary = "Find Label", description = "Get Label object by providing it's id.", tags = {"GET"})
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "404", description = "Given name doesn't match any existing label name", content = {@Content(schema = @Schema())})
+    @ApiResponse(responseCode = "404", description = "Given id doesn't match any existing label id", content = {@Content(schema = @Schema())})
     @GetMapping("/{id}")
     @JsonView({Views.Get.class})
-    public LabelDto findById(@PathVariable String id) {
+    public LabelDto findById(@PathVariable Long id) {
         log.debug("Finding label by name = " + id);
         return labelService.findById(id);
     }
@@ -50,7 +50,7 @@ public class LabelController {
     @Operation(summary = "Create Label", description = "Create Label object by providing it's body", tags = {"POST"})
     @PostMapping
     @ApiResponse(responseCode = "201")
-    @ApiResponse(responseCode = "400", description = "Given label body didn't provide label name", content = {@Content(schema = @Schema())})
+    @ApiResponse(responseCode = "400", description = "Given label body has provided id", content = {@Content(schema = @Schema())})
     @ResponseStatus(HttpStatus.CREATED)
     @JsonView({Views.Get.class})
     public LabelDto create(@RequestBody @JsonView({Views.Post.class}) LabelDto labelDto) {
@@ -59,20 +59,20 @@ public class LabelController {
     }
 
 
-    @Operation(summary = "Update Label", description = "Update Label by providing it's name and body", tags = {"PUT"})
-    @PutMapping("/{name}")
+    @Operation(summary = "Update Label", description = "Update Label by providing it's id and body", tags = {"PUT"})
+    @PutMapping("/{id}")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "400", description = "Provided name from mapping doesn't match label name", content = {@Content(schema = @Schema())})
+    @ApiResponse(responseCode = "400", description = "Provided id from mapping doesn't match label id", content = {@Content(schema = @Schema())})
     @JsonView({Views.Get.class})
-    public ResponseEntity<LabelDto> update(@PathVariable String name, @RequestBody @JsonView({Views.Put.class}) LabelDto labelDto) {
-        log.debug("Updating label with id = {}\nand body = {}", name, labelDto);
-        return labelService.update(name, labelDto);
+    public LabelDto update(@PathVariable Long id, @RequestBody @JsonView({Views.Put.class}) LabelDto labelDto) {
+        log.debug("Updating label with id = {} and body = {}", id, labelDto);
+        return labelService.update(id, labelDto);
     }
 
-    @Operation(summary = "Delete Label", description = "Delete label by providing it's name", tags = {"DELETE"})
-    @DeleteMapping("/{labelName}")
-    public void delete(@PathVariable String labelName) {
-        log.debug("Updating label with name = {}", labelName);
-        labelService.delete(labelName);
+    @Operation(summary = "Delete Label", description = "Delete label by providing it's id", tags = {"DELETE"})
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        log.debug("Updating label with name = {}", id);
+        labelService.delete(id);
     }
 }

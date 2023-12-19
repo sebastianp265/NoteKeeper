@@ -60,22 +60,22 @@ public class NoteService {
         noteRepository.deleteById(id);
     }
 
-    public NoteDto attachLabel(Long id, String labelName) {
-        Note note = noteRepository.findById(id)
+    public NoteDto attachLabel(Long noteId, Long labelId) {
+        Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
 
-        Label label = labelRepository.findById(labelName)
+        Label label = labelRepository.findById(labelId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
         note.getLabels().add(label);
 
         return noteMapper.toDto(noteRepository.save(note));
     }
 
-    public NoteDto detachLabel(Long id, String labelName) {
-        Note note = noteRepository.findById(id)
+    public NoteDto detachLabel(Long noteId, Long labelId) {
+        Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Note with given id not found"));
 
-        Label label = labelRepository.findById(labelName)
+        Label label = labelRepository.findById(labelId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Label with given name not found"));
         note.getLabels().remove(label);
 

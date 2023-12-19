@@ -39,7 +39,7 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: update # (create, create-drop, validate, update)
+      ddl-auto: create-drop # (create, create-drop, validate, update)
 
 ---
 

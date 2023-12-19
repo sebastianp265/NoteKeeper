@@ -79,32 +79,30 @@ class PutTest {
     @Test
     void updateLabel_whenLabelExists_thenLabelIsUpdated() throws Exception {
         // given
-        Label label = Label.builder()
-                .name("name")
-                .description("description")
-                .build();
-        labelRepository.save(label);
+        Label savedLabel = labelRepository.save(Label.builder()
+                .name("Simple name before update")
+                .build());
 
-        Label labelInDBBeforeUpdating = labelRepository.findById(label.getName()).orElseThrow();
-        String name = labelInDBBeforeUpdating.getName();
+        Label labelInDBBeforeUpdating = labelRepository.findById(savedLabel.getId()).orElseThrow();
+
         Instant labelInDBCreationDate = labelInDBBeforeUpdating.getCreatedDate();
         Instant labelInDBLastModifiedDateBeforeUpdating = labelInDBBeforeUpdating.getLastModifiedDate();
 
-        String updatedDescription = "updated description";
+        String updatedName = "Simple name after update";
 
-        String updatedLabel = "{\"name\": \"" + name + "\", \"description\": \"" + updatedDescription + "\"}";
+        String updatedLabel = "{\"id\": \"" + savedLabel.getId() + "\", \"name\": \"" + updatedName + "\"}";
 
         // when
-        mockMvc.perform(put("/labels/" + name)
+        mockMvc.perform(put("/labels/" + savedLabel.getId())
                         .contentType("application/json")
                         .content(updatedLabel))
                 .andExpect(status().isOk());
 
         // then
-        Label updatedLabelInDB = labelRepository.findById(name).orElseThrow();
+        Label updatedLabelInDB = labelRepository.findById(savedLabel.getId()).orElseThrow();
 
-        assertThat(updatedLabelInDB.getName()).isEqualTo(name);
-        assertThat(updatedLabelInDB.getDescription()).isEqualTo(updatedDescription);
+        assertThat(updatedLabelInDB.getId()).isEqualTo(savedLabel.getId());
+        assertThat(updatedLabelInDB.getName()).isEqualTo(updatedName);
         assertThat(updatedLabelInDB.getCreatedDate()).isEqualTo(labelInDBCreationDate);
         assertThat(updatedLabelInDB.getLastModifiedDate()).isAfter(labelInDBLastModifiedDateBeforeUpdating);
     }
@@ -112,7 +110,7 @@ class PutTest {
     @Test
     void updateNote_whenNoteDoesNotExist_thenNotFoundIsReturned() throws Exception {
         // given
-        Long id = 1003L;
+        long id = 1003L;
 
         String updatedNote = "{\"id\": " + id + ", \"title\": \"updated title\", \"content\": \"updated content\"}";
 
@@ -123,27 +121,7 @@ class PutTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    void updateLabel_whenLabelDoesNotExist_thenLabelIsCreated() throws Exception {
-        // given
-        String name = "name1002";
-
-        String updatedLabel = "{\"name\": \"" + name + "\", \"description\": \"updated description\"}";
-        // when
-        mockMvc.perform(put("/labels/" + name)
-                        .contentType("application/json")
-                        .content(updatedLabel))
-                .andExpect(status().isCreated());
-        // then
-        Label updatedLabelInDB = labelRepository.findById(name).orElseThrow();
-
-        assertThat(updatedLabelInDB.getName()).isEqualTo(name);
-        assertThat(updatedLabelInDB.getDescription()).isEqualTo("updated description");
-        assertThat(updatedLabelInDB.getCreatedDate()).isNotNull();
-        assertThat(updatedLabelInDB.getLastModifiedDate()).isNotNull();
-    }
-
-    @Test
+     @Test
     void updateNote_whenNoteIdIsNotValid_thenBadRequestIsReturned() throws Exception {
         // given
         String id = "notValidId";
@@ -160,7 +138,7 @@ class PutTest {
     @Test
     void updateNote_whenNoteIdIsNotTheSameAsIdInRequestBody_thenBadRequestIsReturned() throws Exception {
         // given
-        Long id = 1002L;
+        long id = 1002L;
 
         String updatedNote = "{\"id\": " + (id + 1) + ", \"title\": \"updated title\", \"content\": \"updated content\"}";
 
@@ -174,12 +152,17 @@ class PutTest {
     @Test
     void updateLabel_whenLabelNameIsNotTheSameAsNameInRequestBody_thenBadRequestIsReturned() throws Exception {
         // given
-        String name = "name1001";
+        String name = "name";
 
-        String updatedLabel = "{\"name\": \"diffrent name\", \"description\": \"updated description\"}";
+        Label label = Label.builder()
+                .name(name)
+                .build();
+        Label savedLabel = labelRepository.save(label);
+
+        String updatedLabel = "{\"id\": \"" + savedLabel.getId() + "\", \"name\": \"updated name\"}";
 
         // when
-        mockMvc.perform(put("/labels/" + name)
+        mockMvc.perform(put("/labels/" + savedLabel.getId() + 1)
                         .contentType("application/json")
                         .content(updatedLabel))
                 .andExpect(status().isBadRequest());
@@ -188,17 +171,16 @@ class PutTest {
     @Test
     void attachLabel_whenNoteWithGivenNoteIdDoesNotExist_thenNotFoundIsReturned() throws Exception {
         // given
-        Long id = 1001L;
+        long id = 1001L;
         String labelName = "labelName";
 
         Label label = Label.builder()
                 .name(labelName)
-                .description("description")
                 .build();
-        labelRepository.save(label);
+        Label savedLabel = labelRepository.save(label);
 
         // when
-        mockMvc.perform(put("/notes/" + id + "/attach-label/" + labelName))
+        mockMvc.perform(put("/notes/" + id + "/attach-label/" + savedLabel.getId()))
                 .andExpect(status().isNotFound());
     }
 
@@ -211,10 +193,10 @@ class PutTest {
                 .build();
         noteRepository.save(note);
 
-        String labelName = "labelName";
+        long labelId = 1001L;
 
         // when
-        mockMvc.perform(put("/notes/" + note.getId() + "/attach-label/" + labelName))
+        mockMvc.perform(put("/notes/" + note.getId() + "/attach-label/" + labelId))
                 .andExpect(status().isNotFound());
     }
 
@@ -225,21 +207,20 @@ class PutTest {
                 .title("title")
                 .content("content")
                 .build();
-        noteRepository.save(note);
+        Note savedNote = noteRepository.save(note);
 
         Label label = Label.builder()
                 .name("labelName")
-                .description("description")
                 .build();
-        labelRepository.save(label);
+        Label savedLabel = labelRepository.save(label);
 
         // when
-        mockMvc.perform(put("/notes/" + note.getId() + "/attach-label/" + label.getName()))
+        mockMvc.perform(put("/notes/" + savedNote.getId() + "/attach-label/" + savedLabel.getId()))
                 .andExpect(status().isOk());
 
         // then
 
-        Label expectedLabel = labelRepository.findById(label.getName()).orElseThrow();
+        Label expectedLabel = labelRepository.findById(label.getId()).orElseThrow();
         Note noteInDB = noteRepository.findById(note.getId()).orElseThrow();
 
         assertThat(noteInDB.getLabels()).hasSize(1);
@@ -254,22 +235,21 @@ class PutTest {
                 .title("title")
                 .content("content")
                 .build();
-        noteRepository.save(note);
+        note = noteRepository.save(note);
 
         Label label = Label.builder()
                 .name("labelName")
-                .description("description")
                 .build();
-        labelRepository.save(label);
+        label = labelRepository.save(label);
 
         note = noteRepository.findById(note.getId()).orElseThrow();
-        label = labelRepository.findById(label.getName()).orElseThrow();
+        label = labelRepository.findById(label.getId()).orElseThrow();
 
         note.getLabels().add(label);
         noteRepository.save(note);
 
         // when
-        mockMvc.perform(put("/notes/" + note.getId() + "/detach-label/" + label.getName()))
+        mockMvc.perform(put("/notes/" + note.getId() + "/detach-label/" + label.getId()))
                 .andExpect(status().isOk());
 
         // then

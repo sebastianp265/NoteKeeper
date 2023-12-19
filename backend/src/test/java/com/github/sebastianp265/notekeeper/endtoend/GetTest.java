@@ -83,13 +83,12 @@ class GetTest {
         String name = "name11";
         Label label = Label.builder()
                 .name(name)
-                .description("description")
                 .build();
 
         Label savedLabel = labelRepository.save(label);
 
         // when
-        String response = mockMvc.perform(get("/labels/" + savedLabel.getName()))
+        String response = mockMvc.perform(get("/labels/" + savedLabel.getId()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -104,7 +103,7 @@ class GetTest {
     @Test
     void getNoteById_whenNoteDoesNotExist_thenNotFoundIsReturned() throws Exception {
         // given
-        Long id = 10000L;
+        long id = 10000L;
 
         // when
         mockMvc.perform(get("/notes/" + id))
@@ -124,10 +123,10 @@ class GetTest {
     @Test
     void getLabelById_whenLabelDoesNotExist_thenNotFoundIsReturned() throws Exception {
         // given
-        String name = "labelNameThatDoesNotExist";
+        long id = 10000L;
 
         // when
-        mockMvc.perform(get("/labels/" + name))
+        mockMvc.perform(get("/labels/" + id))
                 .andExpect(status().isNotFound());
     }
 
@@ -163,7 +162,6 @@ class GetTest {
         String name = "name12";
         Label label = Label.builder()
                 .name(name)
-                .description("description")
                 .build();
 
         Label savedLabel = labelRepository.save(label);
