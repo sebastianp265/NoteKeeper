@@ -1,15 +1,32 @@
+version: '3.8'
+
 services:
+  frontend:
+    build: frontend
+    ports:
+      - '3000:3000'
+    networks:
+      - network
+    depends_on:
+      backend:
+        condition: service_healthy
+
   backend:
     build: backend
     environment:
       - SPRING_PROFILES_ACTIVE=dev
     ports:
-      - 8080:8080
+      - '8080:8080'
     networks:
       - network
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: wget -qO- http://localhost:8080/actuator/health | grep '"status":"UP"' || exit 1
+      interval: 2s
+      timeout: 2s
+      retries: 20
 
   db:
     image: postgres:16.0-alpine
@@ -21,15 +38,14 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - '5432:5432'
     networks:
       - network
     healthcheck:
       test: pg_isready -U postgres
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
+      interval: 2s
+      timeout: 2s
+      retries: 20
 
 networks:
   network:

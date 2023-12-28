@@ -1,4 +1,28 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  encoding: "@project.build.sourceEncoding@"
+  java:
+    source: "@java.version@"
+    target: "@java.version@"
+
 springdoc:
+  show-actuator: true
   default-produces-media-type: application/json
   swagger-ui:
     try-it-out-enabled: true
