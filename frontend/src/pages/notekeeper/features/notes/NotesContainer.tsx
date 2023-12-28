@@ -21,7 +21,7 @@ function NotesContainer() {
     }, [dispatch, labelName])
 
     return (
-        <div className="flex flex-wrap [&>*]:m-2 ml-2 h-fit">
+        <div className="flex flex-wrap [&>*]:m-2 ml-2 h-fit w-full">
             {
                 noteIds.map(
                     (noteId) => <NoteView key={noteId} noteId={noteId}></NoteView>
