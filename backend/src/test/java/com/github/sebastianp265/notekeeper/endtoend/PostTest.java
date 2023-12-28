@@ -1,8 +1,8 @@
 package com.github.sebastianp265.notekeeper.endtoend;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sebastianp265.notekeeper.dto.LabelDto;
-import com.github.sebastianp265.notekeeper.dto.NoteDto;
+import com.github.sebastianp265.notekeeper.dtos.LabelGetDTO;
+import com.github.sebastianp265.notekeeper.dtos.NoteGetDTO;
 import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
 import com.github.sebastianp265.notekeeper.repositories.LabelRepository;
@@ -52,7 +52,7 @@ class PostTest {
                 .andReturn().getResponse().getContentAsString();
 
         // then
-        NoteDto responseNote = objectMapper.readValue(response, NoteDto.class);
+        NoteGetDTO responseNote = objectMapper.readValue(response, NoteGetDTO.class);
 
         Note noteInDB = noteRepository.findById(responseNote.getId()).orElseThrow();
 
@@ -77,7 +77,7 @@ class PostTest {
                 .andReturn().getResponse().getContentAsString();
 
         // then
-        LabelDto labelDto = objectMapper.readValue(response, LabelDto.class);
+        LabelGetDTO labelDto = objectMapper.readValue(response, LabelGetDTO.class);
 
         Label labelInDB = labelRepository.findById(labelDto.getId()).orElseThrow();
 

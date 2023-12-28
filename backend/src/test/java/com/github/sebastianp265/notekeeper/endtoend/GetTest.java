@@ -2,8 +2,8 @@ package com.github.sebastianp265.notekeeper.endtoend;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.sebastianp265.notekeeper.dto.LabelDto;
-import com.github.sebastianp265.notekeeper.dto.NoteDto;
+import com.github.sebastianp265.notekeeper.dtos.LabelGetDTO;
+import com.github.sebastianp265.notekeeper.dtos.NoteGetDTO;
 import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
 import com.github.sebastianp265.notekeeper.mappings.LabelMapper;
@@ -59,7 +59,7 @@ class GetTest {
                 .id(id)
                 .title("title")
                 .content("content")
-                .labels(Collections.emptySet())
+                .labels(Collections.emptyList())
                 .build();
 
         Note savedNote = noteRepository.save(note);
@@ -70,10 +70,10 @@ class GetTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        NoteDto responseNoteDto = objectMapper.readValue(response, NoteDto.class);
+        NoteGetDTO responseNoteDto = objectMapper.readValue(response, NoteGetDTO.class);
 
         // then
-        NoteDto expectedResponseNoteDto = noteMapper.toDto(savedNote);
+        NoteGetDTO expectedResponseNoteDto = noteMapper.toGetDTO(savedNote);
         assertThat(responseNoteDto).usingRecursiveComparison().isEqualTo(expectedResponseNoteDto);
     }
 
@@ -93,10 +93,10 @@ class GetTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        LabelDto responseLabel = objectMapper.readValue(response, LabelDto.class);
+        LabelGetDTO responseLabel = objectMapper.readValue(response, LabelGetDTO.class);
 
         // then
-        LabelDto expectedResponseLabelDto = labelMapper.toDto(savedLabel);
+        LabelGetDTO expectedResponseLabelDto = labelMapper.toGetDTO(savedLabel);
         assertThat(responseLabel).usingRecursiveComparison().isEqualTo(expectedResponseLabelDto);
     }
 
@@ -138,7 +138,7 @@ class GetTest {
                 .id(id)
                 .title("title")
                 .content("content")
-                .labels(Collections.emptySet())
+                .labels(Collections.emptyList())
                 .build();
 
         Note savedNote = noteRepository.save(note);
@@ -149,10 +149,10 @@ class GetTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        List<NoteDto> responseNotes = objectMapper.readValue(response, new TypeReference<>() {});
+        List<NoteGetDTO> responseNotes = objectMapper.readValue(response, new TypeReference<>() {});
 
         // then
-        NoteDto expectedResponseNoteDto = noteMapper.toDto(savedNote);
+        NoteGetDTO expectedResponseNoteDto = noteMapper.toGetDTO(savedNote);
         assertThat(responseNotes).usingRecursiveComparison().isEqualTo(List.of(expectedResponseNoteDto));
     }
 
@@ -172,10 +172,10 @@ class GetTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        List<LabelDto> responseLabels = objectMapper.readValue(response, new TypeReference<>() {});
+        List<LabelGetDTO> responseLabels = objectMapper.readValue(response, new TypeReference<>() {});
 
         // then
-        LabelDto expectedResponseLabelDto = labelMapper.toDto(savedLabel);
+        LabelGetDTO expectedResponseLabelDto = labelMapper.toGetDTO(savedLabel);
         assertThat(responseLabels).usingRecursiveComparison().isEqualTo(List.of(expectedResponseLabelDto));
     }
 

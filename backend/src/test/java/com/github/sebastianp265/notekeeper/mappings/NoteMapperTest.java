@@ -1,11 +1,12 @@
 package com.github.sebastianp265.notekeeper.mappings;
 
-import com.github.sebastianp265.notekeeper.dto.NoteDto;
+import com.github.sebastianp265.notekeeper.dtos.NoteGetDTO;
+import com.github.sebastianp265.notekeeper.dtos.NotePostDTO;
 import com.github.sebastianp265.notekeeper.entities.Label;
 import com.github.sebastianp265.notekeeper.entities.Note;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,19 +22,20 @@ class NoteMapperTest {
                 .id(1L)
                 .title("title")
                 .content("content")
-                .labels(Set.of(Label.builder().name("label").build()
-                        , Label.builder().name("label2").build()))
+                .labels(List.of(
+                        Label.builder().id(1L).name("label1").build(),
+                        Label.builder().id(2L).name("label2").build()))
                 .build();
 
         // when
-        NoteDto noteDto = noteMapper.toDto(note);
+        NoteGetDTO noteDto = noteMapper.toGetDTO(note);
 
         // then
-        NoteDto expectedNoteDto = NoteDto.builder()
+        NoteGetDTO expectedNoteDto = NoteGetDTO.builder()
                 .id(1L)
                 .title("title")
                 .content("content")
-                .labelNames(Set.of("label", "label2"))
+                .labelIds(List.of(1L, 2L))
                 .build();
 
         assertThat(noteDto).usingRecursiveComparison().isEqualTo(expectedNoteDto);
@@ -42,11 +44,9 @@ class NoteMapperTest {
     @Test
     void toNote_shouldMapNoteDtoToNote() {
         // given
-        NoteDto noteDto = NoteDto.builder()
-                .id(1L)
+        NotePostDTO noteDto = NotePostDTO.builder()
                 .title("title")
                 .content("content")
-                .labelNames(Set.of("label", "label2"))
                 .build();
 
         // when
@@ -54,11 +54,8 @@ class NoteMapperTest {
 
         // then
         Note expectedNote = Note.builder()
-                .id(1L)
                 .title("title")
                 .content("content")
-                .labels(Set.of(Label.builder().name("label").build()
-                        , Label.builder().name("label2").build()))
                 .build();
         assertThat(note).usingRecursiveComparison().isEqualTo(expectedNote);
     }

@@ -1,8 +1,9 @@
 package com.github.sebastianp265.notekeeper.controllers;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.github.sebastianp265.notekeeper.dto.NoteDto;
-import com.github.sebastianp265.notekeeper.dto.Views;
+import com.github.sebastianp265.notekeeper.dtos.NoteGetDTO;
+import com.github.sebastianp265.notekeeper.dtos.NotePostDTO;
+import com.github.sebastianp265.notekeeper.dtos.NotePutDTO;
 import com.github.sebastianp265.notekeeper.services.NoteService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,19 +30,23 @@ public class NoteController {
 
     @Operation(summary = "Find all Notes", description = "Get all Note objects.", tags = {"GET"})
     @GetMapping
-    @JsonView(Views.Get.class)
-    public Collection<NoteDto> findAll() {
+    public List<NoteGetDTO> findAll() {
         log.debug("Finding all notes");
         return noteService.findAll();
     }
 
+    @Operation(summary = "Find all Notes by Label", description = "Get all Note objects by providing Label name.", tags = {"GET"})
+    @GetMapping("/by-label-name/{labelName}")
+    public List<NoteGetDTO> findAllByLabel(@PathVariable String labelName) {
+        log.debug("Finding all notes by label name = {}", labelName);
+        return noteService.findAllByLabel(labelName);
+    }
 
     @Operation(summary = "Find Note by id", description = "Get a Note object by providing it's id.", tags = {"GET"})
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Given id doesn't match any existing Note id", content = {@Content(schema = @Schema())})
     @GetMapping("/{id}")
-    @JsonView(Views.Get.class)
-    public NoteDto findById(@PathVariable Long id) {
+    public NoteGetDTO findById(@PathVariable Long id) {
         log.debug("Finding note by id = {}", id);
         return noteService.findById(id);
     }
@@ -51,10 +57,9 @@ public class NoteController {
     @ApiResponse(responseCode = "201")
     @ApiResponse(responseCode = "400", description = "Given note body has provided id", content = {@Content(schema = @Schema())})
     @ResponseStatus(HttpStatus.CREATED)
-    @JsonView(Views.Get.class)
-    public NoteDto create(@RequestBody @JsonView(Views.Post.class) NoteDto noteDto) {
-        log.debug("Creating note with body = {}", noteDto);
-        return noteService.create(noteDto);
+    public NoteGetDTO create(@RequestBody NotePostDTO notePostDTO) {
+        log.debug("Creating note with body = {}", notePostDTO);
+        return noteService.create(notePostDTO);
     }
 
 
@@ -63,10 +68,9 @@ public class NoteController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "400", description = "Provided id from mapping doesn't match note id", content = {@Content(schema = @Schema())})
     @ApiResponse(responseCode = "404", description = "Note with given id not found", content = {@Content(schema = @Schema())})
-    @JsonView(Views.Get.class)
-    public NoteDto update(@PathVariable Long id, @RequestBody @JsonView(Views.Put.class) NoteDto noteDto) {
-        log.debug("Updating note with id = {} and body = {}", id, noteDto);
-        return noteService.update(id, noteDto);
+    public NoteGetDTO update(@PathVariable Long id, @RequestBody NotePutDTO notePutDTO) {
+        log.debug("Updating note with id = {} and body = {}", id, notePutDTO);
+        return noteService.update(id, notePutDTO);
     }
 
 
@@ -79,23 +83,21 @@ public class NoteController {
         noteService.deleteById(id);
     }
 
-    @PutMapping("/{noteId}/attach-label/{labelId}")
+    @PutMapping("/{noteId}/add-label/{labelId}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Attach Label to Note", description = "Attach Label to Note by providing Note id and Label name")
-    @JsonView(Views.Get.class)
-    public NoteDto attachLabel(@PathVariable Long noteId, @PathVariable Long labelId) {
+    public NoteGetDTO addLabel(@PathVariable Long noteId, @PathVariable Long labelId) {
         log.debug("Attaching label to note");
-        return noteService.attachLabel(noteId, labelId);
+        return noteService.addLabel(noteId, labelId);
     }
 
-    @PutMapping("/{noteId}/detach-label/{labelId}")
+    @PutMapping("/{noteId}/remove-label/{labelId}")
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "404", description = "Label with provided id or label with provided name doesn't exist in DB", content = {@Content(schema = @Schema)})
     @Operation(summary = "Detach Label from Note", description = "Detach Label from Note by providing Note id and Label name")
-    @JsonView(Views.Get.class)
-    public NoteDto detachLabel(@PathVariable Long noteId, @PathVariable Long labelId) {
+    public NoteGetDTO removeLabel(@PathVariable Long noteId, @PathVariable Long labelId) {
         log.debug("Detaching label from note");
-        return noteService.detachLabel(noteId, labelId);
+        return noteService.removeLabel(noteId, labelId);
     }
 }

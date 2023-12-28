@@ -45,7 +45,7 @@ class PutTest {
         Note note = Note.builder()
                 .title("title")
                 .content("content")
-                .labels(Collections.emptySet())
+                .labels(Collections.emptyList())
                 .build();
         noteRepository.save(note);
 
@@ -136,39 +136,6 @@ class PutTest {
     }
 
     @Test
-    void updateNote_whenNoteIdIsNotTheSameAsIdInRequestBody_thenBadRequestIsReturned() throws Exception {
-        // given
-        long id = 1002L;
-
-        String updatedNote = "{\"id\": " + (id + 1) + ", \"title\": \"updated title\", \"content\": \"updated content\"}";
-
-        // when
-        mockMvc.perform(put("/notes/" + id)
-                        .contentType("application/json")
-                        .content(updatedNote))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void updateLabel_whenLabelNameIsNotTheSameAsNameInRequestBody_thenBadRequestIsReturned() throws Exception {
-        // given
-        String name = "name";
-
-        Label label = Label.builder()
-                .name(name)
-                .build();
-        Label savedLabel = labelRepository.save(label);
-
-        String updatedLabel = "{\"id\": \"" + savedLabel.getId() + "\", \"name\": \"updated name\"}";
-
-        // when
-        mockMvc.perform(put("/labels/" + savedLabel.getId() + 1)
-                        .contentType("application/json")
-                        .content(updatedLabel))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
     void attachLabel_whenNoteWithGivenNoteIdDoesNotExist_thenNotFoundIsReturned() throws Exception {
         // given
         long id = 1001L;
@@ -180,7 +147,7 @@ class PutTest {
         Label savedLabel = labelRepository.save(label);
 
         // when
-        mockMvc.perform(put("/notes/" + id + "/attach-label/" + savedLabel.getId()))
+        mockMvc.perform(put("/notes/" + id + "/add-label/" + savedLabel.getId()))
                 .andExpect(status().isNotFound());
     }
 
@@ -196,7 +163,7 @@ class PutTest {
         long labelId = 1001L;
 
         // when
-        mockMvc.perform(put("/notes/" + note.getId() + "/attach-label/" + labelId))
+        mockMvc.perform(put("/notes/" + note.getId() + "/add-label/" + labelId))
                 .andExpect(status().isNotFound());
     }
 
@@ -215,7 +182,7 @@ class PutTest {
         Label savedLabel = labelRepository.save(label);
 
         // when
-        mockMvc.perform(put("/notes/" + savedNote.getId() + "/attach-label/" + savedLabel.getId()))
+        mockMvc.perform(put("/notes/" + savedNote.getId() + "/add-label/" + savedLabel.getId()))
                 .andExpect(status().isOk());
 
         // then
@@ -249,7 +216,7 @@ class PutTest {
         noteRepository.save(note);
 
         // when
-        mockMvc.perform(put("/notes/" + note.getId() + "/detach-label/" + label.getId()))
+        mockMvc.perform(put("/notes/" + note.getId() + "/remove-label/" + label.getId()))
                 .andExpect(status().isOk());
 
         // then

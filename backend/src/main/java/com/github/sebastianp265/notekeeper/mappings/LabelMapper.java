@@ -1,16 +1,21 @@
 package com.github.sebastianp265.notekeeper.mappings;
 
-import com.github.sebastianp265.notekeeper.dto.LabelDto;
+import com.github.sebastianp265.notekeeper.dtos.LabelGetDTO;
+import com.github.sebastianp265.notekeeper.dtos.LabelPostDTO;
+import com.github.sebastianp265.notekeeper.dtos.LabelPutDTO;
 import com.github.sebastianp265.notekeeper.entities.Label;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper
 public interface LabelMapper {
 
-    LabelDto toDto(Label label);
+    LabelGetDTO toGetDTO(Label label);
 
     @Mapping(target = "createdDate", ignore = true)
     @Mapping(target = "lastModifiedDate", ignore = true)
-    Label toEntity(LabelDto labelDto);
+    @Mapping(target = "id", ignore = true)
+    Label toEntity(LabelPostDTO labelPostDTO);
+
+    @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
+    void updateEntity(LabelPutDTO labelPutDTO, @MappingTarget Label label);
 }

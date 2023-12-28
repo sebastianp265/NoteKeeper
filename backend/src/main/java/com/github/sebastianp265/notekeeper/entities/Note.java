@@ -1,12 +1,12 @@
 package com.github.sebastianp265.notekeeper.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,22 +16,23 @@ import java.util.Set;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Note extends Auditable {
 
     @Id
     @GeneratedValue
     @Column(name = "note_id")
-    private Long id;
+    Long id;
 
-    private String title;
+    String title;
 
-    private String content;
+    String content;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.DETACH}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "note_label",
             joinColumns = @JoinColumn(name = "note_id"),
             inverseJoinColumns = @JoinColumn(name = "label_id")
     )
-    private Set<Label> labels;
+    List<Label> labels;
 }

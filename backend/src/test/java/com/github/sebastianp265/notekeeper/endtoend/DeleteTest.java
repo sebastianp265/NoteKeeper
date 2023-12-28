@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -42,8 +43,9 @@ class DeleteTest {
         Long id = noteRepository.save(Note.builder()
                 .title("title")
                 .content("content")
-                .labels(Collections.emptySet())
-                .build()).getId();
+                .labels(Collections.emptyList())
+                .build()
+        ).getId();
 
         // when
         mockMvc.perform(delete("/notes/" + id))
@@ -99,7 +101,7 @@ class DeleteTest {
         Note note = noteRepository.save(Note.builder()
                 .title("title")
                 .content("content")
-                .labels(Collections.singleton(label))
+                .labels(List.of(label))
                 .build()
         );
         Long id = note.getId();
