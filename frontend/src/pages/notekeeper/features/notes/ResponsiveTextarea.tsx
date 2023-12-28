@@ -2,21 +2,19 @@ import React from 'react';
 
 interface IProps {
     initialContent: string,
-    onContentChange: (newContent: string) => void
+    textareaRef: React.Ref<HTMLTextAreaElement>
 }
 
-function ResponsiveTextarea({initialContent, onContentChange}: Readonly<IProps>) {
+function ResponsiveTextarea({initialContent, textareaRef}: Readonly<IProps>) {
     const handleOnContentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const newContent = event.target.value;
         event.target.style.height = 'auto';
         event.target.style.height = event.target.scrollHeight + 2 + 'px';
-
-        onContentChange(newContent)
     }
 
     return (
         <textarea
-            value={initialContent}
+            ref={textareaRef}
+            defaultValue={initialContent}
             onChange={handleOnContentChange}
             className="textarea textarea-bordered resize-none scroll"
         />

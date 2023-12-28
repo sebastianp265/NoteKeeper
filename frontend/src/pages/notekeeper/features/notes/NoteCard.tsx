@@ -1,15 +1,18 @@
+import {useAppSelector} from "../../hooks.ts";
+import {selectNoteById} from "./notesSlice.ts";
+
 interface IProps {
-    title: string
-    content: string
-    labelNames: string[]
+    noteId: number
     onClick: () => void
 }
 
-function NoteCard({title, content, labelNames, onClick}: Readonly<IProps>) {
+function NoteCard({noteId, onClick}: Readonly<IProps>) {
+    const {title, content, labelIds} = useAppSelector(state => selectNoteById(state, noteId))
+    const labelNames = useAppSelector(state => labelIds.map(labelId => state.labels.entities[labelId].name))
 
     return (
         <button onClick={onClick}
-             className="btn-ghost card-compact card-bordered rounded-xl basis-[calc(25%-1rem)]"
+                className="btn-ghost card-compact card-bordered rounded-xl basis-[calc(25%-1rem)]"
         >
             <div className="card-body min-h-full">
                 <div className="text-left card-title bw">{title}</div>

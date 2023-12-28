@@ -2,29 +2,37 @@ import {backendApi} from "./backendApi.ts";
 
 const labelClient = backendApi('/labels')
 
-export type Label = {
-    name: string,
-    description: string
+export type LabelGet = {
+    id: number,
+    name: string
 }
 
-export const labelApi = {
+export type LabelPost = {
+    name: string
+}
+
+export type LabelPut = {
+    name: string
+}
+
+export const labelsApi = {
     getAll() {
-        return labelClient.get<Label[]>('')
+        return labelClient.get<LabelGet[]>('')
     },
 
     getById(id: number) {
-        return labelClient.get<Label>(`/${id}`)
+        return labelClient.get<LabelGet>(`/${id}`)
     },
 
-    create(label: Label) {
-        return labelClient.post<Label>('', label)
+    create(label: LabelPost) {
+        return labelClient.post<LabelGet>('', label)
     },
 
-    update(name: string, label: Label) {
-        return labelClient.put<Label>(`/${name}`, label)
+    update(id: number, label: LabelPut) {
+        return labelClient.put<LabelGet>(`/${id}`, label)
     },
 
-    delete(name: string) {
-        return labelClient.delete<void>(`/${name}`)
+    delete(id: number) {
+        return labelClient.delete<void>(`/${id}`)
     }
 }

@@ -6,7 +6,7 @@ export type NoteGet = {
     id: number,
     title: string,
     content: string,
-    labelNames: string[]
+    labelIds: number[]
 }
 
 export type NotePost = {
@@ -39,5 +39,17 @@ export const notesApi = {
 
     delete(id: number) {
         return noteClient.delete<void>(`/${id}`)
+    },
+
+    getAllByLabelName(labelName: string) {
+        return noteClient.get<NoteGet[]>(`/by-label-name/${labelName}`)
+    },
+
+    addLabelToNote(noteId: number, labelId: number) {
+        return noteClient.put<NoteGet>(`/${noteId}/add-label/${labelId}`)
+    },
+
+    removeLabelFromNote(noteId: number, labelId: number) {
+        return noteClient.put<NoteGet>(`/${noteId}/remove-label/${labelId}`)
     }
 }

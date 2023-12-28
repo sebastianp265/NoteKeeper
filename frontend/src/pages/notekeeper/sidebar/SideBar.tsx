@@ -1,51 +1,38 @@
-import {Label, labelApi} from "../../../api/labelsApi.ts";
-import {useEffect, useState} from "react";
-import NoteEditModal from "../notes-container/components/NoteEditModal.tsx";
-import {NoteGet, notesApi} from "../../../api/notesApi.ts";
+import {useNavigate} from "react-router-dom";
+import NoteCreateModal from "../features/notes/NoteCreateModal.tsx";
+import {useAppDispatch, useAppSelector} from "../hooks.ts";
+import {fetchLabels, selectAllLabels} from "../features/labels/labelsSlice.ts";
+import {useEffect} from "react";
 
-interface IProps {
-    createNoteHandle: (note: NoteGet) => void
-}
 
-function SideBar({createNoteHandle}: Readonly<IProps>) {
-    const [labelNames, setLabelNames] = useState<Label[]>([])
+function SideBar() {
+    const noteModalId = "note_modal_create"
+    const allLabels = useAppSelector(selectAllLabels)
+
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
-        labelApi.getAll()
-            .then(res => {
-                setLabelNames(res.data)
-            })
-            .catch(err => console.error(err))
-    }, [])
+        dispatch(fetchLabels())
+    }, [dispatch])
 
-    const modalSaveHandle = (title: string, content: string) => {
-        notesApi.create({title, content})
-            .then(res => {
-                createNoteHandle(res.data)
-            })
-            .catch(err => console.error(err))
-    }
-
-    const createModalId = "create_note_modal"
-
-    const openNoteEditModal = () => {
-        console.log(`opening modal with note id = ${createModalId}`)
-        const noteModalDialog = document.getElementById(createModalId) as HTMLDialogElement
+    const openNoteCreateModal = () => {
+        console.log(`opening modal with note id = ${noteModalId}`)
+        const noteModalDialog = document.getElementById(noteModalId) as HTMLDialogElement
         noteModalDialog.showModal()
     }
+
+    const navigate = useNavigate()
 
     return (
         <div className="flex flex-col space-y-4 ml-2 mt-2">
             <div>
-                <button className="btn btn-outline" onClick={openNoteEditModal}>Create note</button>
-                {
-                    <NoteEditModal noteModalId={createModalId} saveHandle={modalSaveHandle}
-                                   initialTitle={"Note example title"} initialContent={""} labelNames={[]}
-                                   isCreateNote={true}/>
-                }
+                <button className="btn btn-outline" onClick={openNoteCreateModal}>Create note</button>
+                <NoteCreateModal noteModalId={noteModalId}/>
             </div>
-            {labelNames.map(
-                (label) => (<button key={label.name} className="btn text-xs">{label.name}</button>)
+            {allLabels.map(
+                ({id, name}) => (<button key={id}
+                                         onClick={() => navigate(`/by-label-name/${name}`)}
+                                         className="btn text-xs">{name}</button>)
             )}
         </div>
     );
