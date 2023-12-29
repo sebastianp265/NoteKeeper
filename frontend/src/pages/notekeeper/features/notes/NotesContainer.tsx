@@ -12,7 +12,6 @@ function NotesContainer() {
     const {labelName} = useParams()
 
     useEffect(() => {
-        console.log(labelName)
         if (labelName === undefined) {
             dispatch(fetchNotes())
         } else {
