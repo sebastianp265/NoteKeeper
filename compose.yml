@@ -10,6 +10,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+      keycloak:
+        condition: service_started
 
   backend:
     build: backend
@@ -22,6 +24,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      keycloak:
+        condition: service_started
     healthcheck:
       test: wget -qO- http://localhost:8080/actuator/health | grep '"status":"UP"' || exit 1
       interval: 2s
@@ -29,7 +33,7 @@ services:
       retries: 20
 
   db:
-    image: postgres:16.0-alpine
+    image: postgres:16-alpine
     restart: always
     environment:
       - POSTGRES_DB=backend
@@ -42,7 +46,51 @@ services:
     networks:
       - network
     healthcheck:
-      test: pg_isready -U postgres
+      test: pg_isready -U postgres -d backend
+      interval: 2s
+      timeout: 2s
+      retries: 20
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:23.0
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=keycloak-db
+      - KC_DB_URL_DATABASE=keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=password
+      - KC_DB_URL_PORT=5433
+    volumes:
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
+    ports:
+      - '8443:8443'
+    networks:
+      - network
+    command:
+      - "start-dev"
+      - "--http-port=8443"
+      - "--import-realm"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+
+  keycloak-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+      PGPORT: 5433
+    volumes:
+      - keycloak-db:/var/lib/postgresql/data
+    ports:
+      - '5433:5433'
+    networks:
+      - network
+    healthcheck:
+      test: pg_isready -U keycloak -d keycloak
       interval: 2s
       timeout: 2s
       retries: 20
@@ -53,4 +101,6 @@ networks:
 
 volumes:
   db:
+    driver: local
+  keycloak-db:
     driver: local
