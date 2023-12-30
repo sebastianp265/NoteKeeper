@@ -16,7 +16,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfiguration {
+public class SecurityConfig {
 
     @Value("${app.cors.allowed-origins}")
     private List<String> allowedOrigins;
