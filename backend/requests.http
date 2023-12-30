@@ -20,6 +20,13 @@ password = admin &
 client_id = frontend &
 grant_type = password
 
+> {% client.global.set("auth_token", response.body["access_token"]) %}
+
 ###
 
 GET http://localhost:8080/actuator/health
+Authorization: Bearer {{auth_token}}
+
+###
+
+GET http://localhost:8443/realms/notekeeper/protocol/openid-connect/certs
