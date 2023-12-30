@@ -1,6 +1,5 @@
 package com.github.sebastianp265.notekeeper.controllers;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.github.sebastianp265.notekeeper.dtos.NoteGetDTO;
 import com.github.sebastianp265.notekeeper.dtos.NotePostDTO;
 import com.github.sebastianp265.notekeeper.dtos.NotePutDTO;
@@ -9,19 +8,20 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @Slf4j
 @RestController
 @ControllerAdvice
 @Tag(name = "Notes", description = "Notes management APIs")
+@SecurityRequirement(name = "bearer-key")
 @RequestMapping(value = "notes")
 @RequiredArgsConstructor
 public class NoteController {
